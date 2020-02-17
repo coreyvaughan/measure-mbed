@@ -38,7 +38,7 @@ void displayStats(uint32_t, uint32_t, uint32_t, uint64_t);
 
 int main(void) {
   uint32_t timeElapsed = 0;
-  uint32_t minTime = 0xFFFFFFFF;
+  uint32_t minTime = UINT32_MAX;
   uint32_t meanTime = 0;
   uint32_t maxTime = 0;
   uint64_t totalTime = 0;
@@ -53,17 +53,19 @@ int main(void) {
      */ 
     counterStart();
     timeElapsed = counterStop();
-    pc.printf("\nNOP  : %020lu\n", timeElapsed);
+    pc.printf("\nNOP  : %12lu ticks @ 60MHz\n", timeElapsed);
+	pc.printf("Reset clock...\n");
 
     /* Reset all statistics and display the values to
      * ensure that they have been reset
      */
-    minTime = 0xFFFFFFFF;
+    minTime = UINT32_MAX;
     meanTime = 0;
     maxTime = 0;
     totalTime = 0;
     displayStats(minTime, meanTime, maxTime, totalTime);
 
+	pc.printf("measuring. %6d iterations...", N_ITERATIONS);
     /* Repeatedly measure the execution time of the code in
      * which we are interested - this is the 'Software under test'
      */
@@ -82,6 +84,7 @@ int main(void) {
       }
       totalTime += timeElapsed;
     }
+	pc.printf("done\n");
 
     /* Display the statistics that have been captured */
     meanTime = totalTime / N_ITERATIONS;
@@ -92,6 +95,7 @@ int main(void) {
       red = 1 - red;
       wait(0.5);
     }
+	pc.printf("\n");
   }
 }
 
@@ -99,9 +103,9 @@ void displayStats(uint32_t minTime,
                   uint32_t meanTime,
                   uint32_t maxTime,
                   uint64_t totalTime) {
-  pc.printf("Min  : %020lu\n", minTime);
-  pc.printf("Mean : %020lu\n", meanTime);
-  pc.printf("Max  : %020lu\n", maxTime);
-  pc.printf("Tot  : %020llu\n", totalTime);
+  pc.printf("Min  : %12lu ticks @ 60MHz\n", minTime);
+  pc.printf("Mean : %12lu ticks @ 60MHz\n", meanTime);
+  pc.printf("Max  : %12lu ticks @ 60MHz\n", maxTime);
+  pc.printf("Tot  : %12llu ticks @ 60MHz\n", totalTime);
 }
 
